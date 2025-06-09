@@ -74,7 +74,7 @@ export default function Navbar() {
             <NavLink
               to="/"
               className={({ isActive }) => cn(
-                "relative px-4 py-2 text-sm font-medium transition-all duration-300 overflow-hidden rounded-lg",
+                "relative px-4 py-2 text-sm font-medium transition-all duration-300 overflow-hidden rounded-full",
                 isActive 
                   ? "text-primary bg-primary/10" 
                   : "text-foreground/70 hover:text-foreground hover:bg-accent"
@@ -96,7 +96,7 @@ export default function Navbar() {
             <NavLink
               to="/questions"
               className={({ isActive }) => cn(
-                "relative px-4 py-2 text-sm font-medium transition-all duration-300 overflow-hidden rounded-lg",
+                "relative px-4 py-2 text-sm font-medium transition-all duration-300 overflow-hidden rounded-full",
                 isActive 
                   ? "text-primary bg-primary/10" 
                   : "text-foreground/70 hover:text-foreground hover:bg-accent"
@@ -117,7 +117,7 @@ export default function Navbar() {
             <NavLink
               to="/upgrade"
               className={({ isActive }) => cn(
-                "relative px-4 py-2 text-sm font-medium transition-all duration-300 overflow-hidden rounded-lg flex items-center gap-2",
+                "relative px-4 py-2 text-sm font-medium transition-all duration-300 overflow-hidden rounded-full flex items-center gap-2",
                 isActive 
                   ? "text-primary bg-primary/10" 
                   : "text-foreground/70 hover:text-foreground hover:bg-accent"
@@ -139,7 +139,7 @@ export default function Navbar() {
             <NavLink
               to="/how-it-works"
               className={({ isActive }) => cn(
-                "relative px-4 py-2 text-sm font-medium transition-all duration-300 overflow-hidden rounded-lg",
+                "relative px-4 py-2 text-sm font-medium transition-all duration-300 overflow-hidden rounded-full",
                 isActive 
                   ? "text-primary bg-primary/10" 
                   : "text-foreground/70 hover:text-foreground hover:bg-accent"

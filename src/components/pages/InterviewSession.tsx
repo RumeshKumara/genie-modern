@@ -90,6 +90,7 @@ export default function InterviewSession() {
   const [isMicOn, setIsMicOn] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showEvalModal, setShowEvalModal] = useState(false);
   const webcamRef = useRef<Webcam | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
@@ -175,6 +176,7 @@ export default function InterviewSession() {
     }));
     
     setIsEvaluating(false);
+    setShowEvalModal(true);
   };
 
   const handleNextQuestion = () => {
@@ -501,52 +503,9 @@ export default function InterviewSession() {
                     </motion.div>
                   )}
 
-                  {/* Controls */}
+                  {/* Controls - Remove this section */}
                   <div className="flex items-center gap-4 pt-4">
-                    <Button
-                      variant="outline"
-                      onClick={handlePreviousQuestion}
-                      disabled={currentQuestionIndex === 0 || isRecording}
-                      className="flex items-center gap-2"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      Previous
-                    </Button>
-                    
-                    {!isRecording ? (
-                      <Button
-                        onClick={handleStartRecording}
-                        className="relative flex items-center justify-center flex-1 gap-2 overflow-hidden "
-                        disabled={!!answers[currentQuestionIndex]}
-                      >
-                        <Play className="w-4 h-4" />
-                        Start Recording
-                        <motion.div
-                          className="absolute inset-0 bg-white/20"
-                          initial={{ scale: 0, opacity: 0 }}
-                          animate={{ scale: [0, 1.5], opacity: [0.5, 0] }}
-                          transition={{ repeat: Infinity, duration: 2 }}
-                        />
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={handleStopRecording}
-                        variant="outline"
-                        className="flex items-center justify-center flex-1 gap-2 text-red-500 border-red-500/50 hover:bg-red-500/10"
-                      >
-                        <Pause className="w-4 h-4" />
-                        Stop Recording
-                      </Button>
-                    )}
-
-                    <Button
-                      onClick={handleNextQuestion}
-                      disabled={!answers[currentQuestionIndex] || isRecording}
-                      className="flex items-center gap-2 "
-                    >
-                      {currentQuestionIndex === dummyQuestions.length - 1 ? 'Finish' : 'Next'}
-                      <ChevronRight className="w-4 h-4" />
-                    </Button>
+                    {/* Remove all the button content here */}
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -756,6 +715,59 @@ export default function InterviewSession() {
               </div>
             </motion.div>
 
+            {/* Add Controls here - after camera feed, before progress overview */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="flex items-center gap-4"
+            >
+              <Button
+                variant="outline"
+                onClick={handlePreviousQuestion}
+                disabled={currentQuestionIndex === 0 || isRecording}
+                className="flex items-center gap-2"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Previous
+              </Button>
+              
+              {!isRecording ? (
+                <Button
+                  onClick={handleStartRecording}
+                  className="relative flex items-center justify-center flex-1 gap-2 overflow-hidden"
+                  disabled={!!answers[currentQuestionIndex]}
+                >
+                  <Play className="w-4 h-4" />
+                  Start Recording
+                  <motion.div
+                    className="absolute inset-0 bg-white/20"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: [0, 1.5], opacity: [0.5, 0] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                  />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleStopRecording}
+                  variant="outline"
+                  className="flex items-center justify-center flex-1 gap-2 text-red-500 border-red-500/50 hover:bg-red-500/10"
+                >
+                  <Pause className="w-4 h-4" />
+                  Stop Recording
+                </Button>
+              )}
+
+              <Button
+                onClick={handleNextQuestion}
+                disabled={!answers[currentQuestionIndex] || isRecording}
+                className="flex items-center gap-2"
+              >
+                {currentQuestionIndex === dummyQuestions.length - 1 ? 'Finish' : 'Next'}
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </motion.div>
+
             {/* Progress Overview */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -868,6 +880,117 @@ export default function InterviewSession() {
           </div>
         </div>
       </div>
+
+      {/* Evaluation Modal */}
+      <AnimatePresence>
+        {showEvalModal && answers[currentQuestionIndex] && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowEvalModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full max-w-2xl p-6 mx-4"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="p-8 space-y-6 border shadow-2xl bg-gradient-to-br from-card via-card to-card/50 backdrop-blur-xl rounded-2xl border-border/50">
+                <div className="flex items-center justify-between">
+                  <h3 className="flex items-center gap-3 text-2xl font-bold">
+                    <motion.div
+                      className="p-2 bg-purple-600 rounded-full"
+                      whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Award className="w-6 h-6 text-white" />
+                    </motion.div>
+                    Evaluation Results
+                  </h3>
+                  <motion.span 
+                    className={`text-5xl font-bold ${
+                      getScoreColor(answers[currentQuestionIndex].evaluation.score)
+                    }`}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.3, type: "spring" }}
+                  >
+                    {answers[currentQuestionIndex].evaluation.score}%
+                  </motion.span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <motion.div 
+                    className="space-y-3"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <h4 className="flex items-center gap-2 font-semibold text-green-600">
+                      <ThumbsUp className="w-4 h-4" />
+                      Strengths
+                    </h4>
+                    <ul className="space-y-2">
+                      {answers[currentQuestionIndex].evaluation.strengths.map((strength, i) => (
+                        <motion.li 
+                          key={i} 
+                          className="flex items-start gap-2 text-sm text-muted-foreground"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.5 + i * 0.1 }}
+                        >
+                          <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          {strength}
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+
+                  <motion.div 
+                    className="space-y-3"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <h4 className="flex items-center gap-2 font-semibold text-orange-600">
+                      <Target className="w-4 h-4" />
+                      Areas to Improve
+                    </h4>
+                    <ul className="space-y-2">
+                      {answers[currentQuestionIndex].evaluation.improvements.map((improvement, i) => (
+                        <motion.li 
+                          key={i} 
+                          className="flex items-start gap-2 text-sm text-muted-foreground"
+                          initial={{ opacity: 0, x: 10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.5 + i * 0.1 }}
+                        >
+                          <XCircle className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                          {improvement}
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </div>
+
+                <div className="flex justify-end gap-4 pt-6 mt-6 border-t border-border/50">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowEvalModal(false)}
+                    className="flex items-center gap-2"
+                  >
+                    Close and Continue
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
