@@ -26,6 +26,8 @@ export default function InterviewSetup() {
   const { user } = useAuthStore();
   const [hasWebcam, setHasWebcam] = useState(false);
   const [hasMic, setHasMic] = useState(false);
+  const [cameraEnabled, setCameraEnabled] = useState(true);
+  const [micEnabled, setMicEnabled] = useState(true);
   const [isReady, setIsReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [permissionError, setPermissionError] = useState<string | null>(null);
@@ -94,6 +96,20 @@ export default function InterviewSetup() {
       setPermissionError('Failed to generate interview questions. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const toggleCamera = () => {
+    setCameraEnabled(!cameraEnabled);
+    if (!cameraEnabled) {
+      handleDeviceCheck();
+    }
+  };
+
+  const toggleMic = () => {
+    setMicEnabled(!micEnabled);
+    if (!micEnabled) {
+      handleDeviceCheck();
     }
   };
 
@@ -291,19 +307,19 @@ export default function InterviewSetup() {
             <Card className="p-6">
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">Camera Preview</h2>
-                <div className="relative overflow-hidden rounded-lg aspect-video bg-black/10">
-                  {hasWebcam ? (
+                <div className="relative overflow-hidden rounded-lg aspect-video bg-purple-500/10 max-w-xl mx-auto max-h-[300px]">
+                  {hasWebcam && cameraEnabled ? (
                     <Webcam
                       ref={webcamRef}
-                      audio={false}
+                      audio={micEnabled}
                       className="object-cover w-full h-full"
                       mirrored
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="space-y-4 text-center">
-                        <AlertCircle className="w-12 h-12 mx-auto text-muted-foreground" />
-                        <p className="text-muted-foreground">Camera not detected</p>
+                        <AlertCircle className="w-12 h-12 mx-auto text-purple-800" />
+                        <p className="text-purple-800">Camera not detected</p>
                       </div>
                     </div>
                   )}
@@ -329,89 +345,87 @@ export default function InterviewSetup() {
 
             {/* Device Check and Controls */}
             <Card className="p-6">
-              <div className="space-y-6">
-                <div className="space-y-4">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
                   <h2 className="text-xl font-semibold">System Check</h2>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="flex items-center gap-3 p-4 border rounded-lg border-border">
-                      {hasWebcam ? (
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                      ) : (
-                        <XCircle className="w-5 h-5 text-red-500" />
-                      )}
-                      <div>
-                        <p className="font-medium">Camera</p>
-                        <p className="text-sm text-muted-foreground">
-                          {hasWebcam ? 'Working properly' : 'Not detected'}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 p-4 border rounded-lg border-border">
-                      {hasMic ? (
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                      ) : (
-                        <XCircle className="w-5 h-5 text-red-500" />
-                      )}
-                      <div>
-                        <p className="font-medium">Microphone</p>
-                        <p className="text-sm text-muted-foreground">
-                          {hasMic ? 'Working properly' : 'Not detected'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {permissionError && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-4 border border-red-200 rounded-lg bg-red-50 dark:bg-red-950/20 dark:border-red-800"
+                  <div className="flex gap-3">
+                    <button
+                      onClick={toggleCamera}
+                      className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs transition-colors ${
+                        cameraEnabled 
+                          ? hasWebcam ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'
+                          : 'bg-gray-500/10 text-gray-500'
+                      }`}
                     >
-                      <div className="flex items-start gap-2">
-                        <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
-                        <div className="text-sm text-red-700 dark:text-red-400">
-                          {permissionError}
-                        </div>
+                      <Video size={12} />
+                      {cameraEnabled ? (hasWebcam ? 'ON' : 'Error') : 'OFF'}
+                    </button>
+                    <button
+                      onClick={toggleMic}
+                      className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs transition-colors ${
+                        micEnabled
+                          ? hasMic ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'
+                          : 'bg-gray-500/10 text-gray-500'
+                      }`}
+                    >
+                      <Mic size={12} />
+                      {micEnabled ? (hasMic ? 'ON' : 'Error') : 'OFF'}
+                    </button>
+                    <Button
+                  onClick={handleDeviceCheck}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center justify-center gap-2"
+                >
+                  <Settings className="w-4 h-4" />
+                  Check Devices
+                </Button>
+                  </div>
+                </div>
+                
+                {permissionError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3 text-sm border border-red-200 rounded-md bg-red-50 dark:bg-red-950/20 dark:border-red-800"
+                  >
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
+                      <div className="text-red-700 dark:text-red-400">
+                        {permissionError}
                       </div>
-                    </motion.div>
-                  )}
-                </div>
+                    </div>
+                  </motion.div>
+                )}
 
-                <div className="flex flex-col gap-4 sm:flex-row">
-                  <Button
-                    onClick={handleDeviceCheck}
-                    variant="outline"
-                    className="flex items-center justify-center gap-2"
-                  >
-                    <Settings className="w-4 h-4" />
-                    Test Devices
-                  </Button>
-                  
-                  <Button
-                    onClick={startInterview}
-                    className="flex-1"
-                    disabled={!isReady || isLoading || !canUseMoreQuestions}
-                  >
-                    {isLoading ? (
-                      <>
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                          className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent"
-                        />
-                        Preparing Interview...
-                      </>
-                    ) : (
-                      <>
-                        <MessageSquare className="w-4 h-4 mr-2" />
-                        Start Interview ({questionCount} questions)
-                      </>
-                    )}
-                  </Button>
-                </div>
+                
               </div>
             </Card>
+
+            <div className="flex justify-end">
+              <Button
+                onClick={startInterview}
+                size="lg"
+                className="flex items-center justify-center gap-2"
+                disabled={!isReady || isLoading || !canUseMoreQuestions}
+              >
+                {isLoading ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-3 h-3 mr-2 border-2 border-white rounded-full border-t-transparent"
+                    />
+                    Preparing...
+                  </>
+                ) : (
+                  <>
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Start Interview
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </motion.div>

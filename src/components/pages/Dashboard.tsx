@@ -5,6 +5,7 @@ import { Card } from '../ui/Card';
 import Button from '../ui/Button';
 import { useAuthStore } from '../../store/authStore';
 import NewInterviewModal from '../features/NewInterviewModal';
+import InterviewResultModal from '../features/InterviewResultModal';
 
 const container = {
   hidden: { opacity: 0 },
@@ -19,6 +20,12 @@ const container = {
 const item = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0 }
+};
+
+const cardVariants = {
+  initial: { scale: 1 },
+  hover: { scale: 1.02 },
+  tap: { scale: 0.98 },
 };
 
 export default function Dashboard() {
@@ -61,6 +68,8 @@ export default function Dashboard() {
       status: 'completed'
     }
   ]);
+  const [selectedInterview, setSelectedInterview] = useState<any>(null);
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
 
   const handleCreateInterview = (interviewData: {
     title: string;
@@ -95,6 +104,37 @@ export default function Dashboard() {
         interviews.filter(i => i.score).length
     ),
     streak: 5
+  };
+
+  // Add mock feedback data to completed interviews
+  const interviewsWithFeedback = interviews.map(interview => {
+    if (interview.status === 'completed') {
+      return {
+        ...interview,
+        feedback: "You demonstrated strong technical knowledge and communication skills. Keep working on system design concepts.",
+        strengths: [
+          "Clear communication",
+          "Strong problem-solving approach",
+          "Good technical fundamentals"
+        ],
+        improvements: [
+          "Deepen system design knowledge",
+          "Practice time management",
+          "Elaborate more on past experiences"
+        ]
+      };
+    }
+    return interview;
+  });
+
+  const handleInterviewClick = (interview: any) => {
+    if (interview.status === 'completed') {
+      const selectedWithFeedback = interviewsWithFeedback.find(i => i.id === interview.id);
+      setSelectedInterview(selectedWithFeedback);
+      setIsResultModalOpen(true);
+    } else {
+      window.location.href = `/interview/${interview.id}`;
+    }
   };
 
   return (
@@ -278,7 +318,14 @@ export default function Dashboard() {
         {/* Interview cards */}
         {filteredInterviews.map((interview) => (
           <motion.div key={interview.id} variants={item}>
-            <Card className="p-6 space-y-4 card-hover-effect bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+            <motion.div
+              variants={cardVariants}
+              initial="initial"
+              whileHover="hover"
+              whileTap="tap"
+              onClick={() => handleInterviewClick(interview)}
+              className="p-6 space-y-4 transition-colors border rounded-lg shadow-lg cursor-pointer bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-border/50 hover:border-primary/20"
+            >
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
                   <h3 className="text-xl font-semibold line-clamp-2">{interview.title}</h3>
@@ -311,24 +358,31 @@ export default function Dashboard() {
               </div>
 
               <div className="pt-4">
-                <Button 
-                  className="w-full group button-hover-effect "
-                  size="lg"
+                <motion.button 
+                  className="flex items-center justify-center w-full gap-2 px-4 py-2 text-white rounded-lg bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 group"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   {interview.status === 'completed' ? 'View Results' : 'Start Interview'}
-                  <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
-                </Button>
+                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                </motion.button>
               </div>
-            </Card>
+            </motion.div>
           </motion.div>
         ))}
       </motion.div>
 
-      {/* New Interview Modal */}
+      {/* Modals */}
       <NewInterviewModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSubmit={handleCreateInterview}
+      />
+      
+      <InterviewResultModal
+        isOpen={isResultModalOpen}
+        onClose={() => setIsResultModalOpen(false)}
+        interview={selectedInterview}
       />
     </motion.div>
   );
