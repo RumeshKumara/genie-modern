@@ -155,7 +155,7 @@ export default function NewInterviewModal({ isOpen, onClose, onSubmit }: NewInte
                   value={formData.title}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 transition-all duration-200 border rounded-lg border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm"
+                  className="w-full px-4 py-3 transition-all duration-200 border rounded-2xl border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm"
                   placeholder="e.g., Frontend Developer Interview"
                 />
               </motion.div>
@@ -177,7 +177,7 @@ export default function NewInterviewModal({ isOpen, onClose, onSubmit }: NewInte
                   value={formData.jobRole}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 transition-all duration-200 border rounded-lg border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm"
+                  className="w-full px-4 py-3 transition-all duration-200 border rounded-2xl border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm"
                   placeholder="e.g., Senior React Developer"
                 />
               </motion.div>
@@ -198,11 +198,17 @@ export default function NewInterviewModal({ isOpen, onClose, onSubmit }: NewInte
                   value={formData.yearsOfExperience}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 transition-all duration-200 border rounded-lg border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm"
+                  className="w-full px-4 py-3 transition-colors duration-300 ease-in-out border rounded-2xl border-input bg-background/50 hover:bg-accent/20 focus:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm text-foreground [&>option]:transition-colors [&>option]:duration-300 [&>option]:bg-background [&>option:checked]:bg-primary/80 [&>option:checked]:text-white"
                 >
-                  <option value="">Select experience level</option>
+                  <option value="" className="text-muted-foreground bg-background/90 hover:bg-accent/50">Select experience level</option>
                   {experienceOptions.map(option => (
-                    <option key={option} value={option}>{option}</option>
+                    <option 
+                      key={option} 
+                      value={option} 
+                      className="text-foreground bg-background/90 hover:bg-accent/50"
+                    >
+                      {option}
+                    </option>
                   ))}
                 </select>
               </motion.div>
@@ -223,11 +229,17 @@ export default function NewInterviewModal({ isOpen, onClose, onSubmit }: NewInte
                   value={formData.reasonForInterview}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 transition-all duration-200 border rounded-lg border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm"
+                  className="w-full px-4 py-3 transition-colors duration-300 ease-in-out border rounded-2xl border-input bg-background/50 hover:bg-accent/20 focus:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm text-foreground [&>option]:transition-colors [&>option]:duration-300 [&>option]:bg-background [&>option:checked]:bg-primary/80 [&>option:checked]:text-white"
                 >
-                  <option value="">Select your goal</option>
+                  <option value="" className="text-muted-foreground bg-background/90 hover:bg-accent/50">Select your goal</option>
                   {reasonOptions.map(option => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
+                    <option 
+                      key={option.value} 
+                      value={option.value}
+                      className="text-foreground bg-background/90 hover:bg-accent/50"
+                    >
+                      {option.label}
+                    </option>
                   ))}
                 </select>
               </motion.div>

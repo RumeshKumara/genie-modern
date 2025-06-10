@@ -285,7 +285,7 @@ export default function InterviewSession() {
                       {dummyQuestions.map((_, index) => (
                         <motion.div
                           key={index}
-                          className="flex-1 h-3 overflow-hidden rounded-full bg-muted/30"
+                          className="flex-1 h-3 overflow-hidden rounded-full bg-purple-900/10"
                           initial={{ scale: 0.8, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
                           transition={{ delay: index * 0.1 }}

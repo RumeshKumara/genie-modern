@@ -183,7 +183,7 @@ export default function Navbar() {
               <div className="relative">
                 <motion.button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-3 p-2 transition-all duration-300 rounded-lg hover:bg-accent"
+                  className="flex items-center gap-3 p-2 transition-all duration-300 rounded-full hover:bg-accent"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -210,9 +210,9 @@ export default function Navbar() {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 w-56 mt-2 overflow-hidden border rounded-lg shadow-lg bg-card border-border"
+                      className="absolute right-0 w-56 mt-2 overflow-hidden border shadow-lg rounded-3xl bg-card border-border"
                     >
-                      <div className="p-4 border-b border-border">
+                      <div className="p-4 border-b border-border ">
                         <p className="font-medium">{user.name}</p>
                         <p className="text-sm text-muted-foreground">{user.email}</p>
                         <div className="flex items-center gap-2 mt-2">
@@ -227,13 +227,13 @@ export default function Navbar() {
                         </div>
                       </div>
                       <div className="p-2">
-                        <button className="flex items-center w-full gap-3 px-3 py-2 text-sm transition-colors rounded-md hover:bg-accent">
+                        <button className="flex items-center w-full gap-3 px-3 py-2 text-sm transition-colors rounded-2xl hover:bg-accent">
                           <Settings size={16} />
                           Settings
                         </button>
                         <button 
                           onClick={handleLogout}
-                          className="flex items-center w-full gap-3 px-3 py-2 text-sm text-red-500 transition-colors rounded-md hover:bg-accent"
+                          className="flex items-center w-full gap-3 px-3 py-2 text-sm text-red-500 transition-colors rounded-2xl hover:bg-accent"
                         >
                           <LogOut size={16} />
                           Sign Out
@@ -246,7 +246,7 @@ export default function Navbar() {
             ) : (
               <motion.button
                 onClick={handleLogin}
-                className="flex items-center gap-2 px-4 py-2 transition-all duration-300 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
+                className="flex items-center gap-2 px-4 py-2 transition-all duration-300 rounded-3xl bg-primary text-primary-foreground hover:bg-primary/90"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -287,7 +287,7 @@ export default function Navbar() {
                 <NavLink
                   to="/"
                   className={({ isActive }) => cn(
-                    "px-4 py-3 rounded-md text-sm font-medium transition-all duration-300",
+                    "px-4 py-3 rounded-full text-sm font-medium transition-all duration-300",
                     isActive 
                       ? "bg-primary/10 text-primary" 
                       : "text-foreground/70 hover:text-foreground hover:bg-accent"
@@ -300,7 +300,7 @@ export default function Navbar() {
                 <NavLink
                   to="/questions"
                   className={({ isActive }) => cn(
-                    "px-4 py-3 rounded-md text-sm font-medium transition-all duration-300",
+                    "px-4 py-3 rounded-full text-sm font-medium transition-all duration-300",
                     isActive 
                       ? "bg-primary/10 text-primary" 
                       : "text-foreground/70 hover:text-foreground hover:bg-accent"
@@ -312,7 +312,7 @@ export default function Navbar() {
                 <NavLink
                   to="/upgrade"
                   className={({ isActive }) => cn(
-                    "px-4 py-3 rounded-md text-sm font-medium transition-all duration-300 flex items-center gap-2",
+                    "px-4 py-3 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2",
                     isActive 
                       ? "bg-primary/10 text-primary" 
                       : "text-foreground/70 hover:text-foreground hover:bg-accent"
@@ -325,7 +325,7 @@ export default function Navbar() {
                 <NavLink
                   to="/how-it-works"
                   className={({ isActive }) => cn(
-                    "px-4 py-3 rounded-md text-sm font-medium transition-all duration-300",
+                    "px-4 py-3 rounded-full text-sm font-medium transition-all duration-300",
                     isActive 
                       ? "bg-primary/10 text-primary" 
                       : "text-foreground/70 hover:text-foreground hover:bg-accent"
@@ -341,7 +341,7 @@ export default function Navbar() {
                       handleLogin();
                       setIsMenuOpen(false);
                     }}
-                    className="flex items-center justify-center gap-2 px-4 py-3 mx-4 mt-4 transition-all duration-300 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
+                    className="flex items-center justify-center gap-2 px-4 py-3 mx-4 mt-4 transition-all duration-300 rounded-3xl bg-primary text-primary-foreground hover:bg-primary/90"
                   >
                     <LogIn size={16} />
                     Sign In

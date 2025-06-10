@@ -167,7 +167,7 @@ export default function Dashboard() {
       {/* User Plan Banner */}
       {isAuthenticated && user && user.plan === 'free' && (
         <motion.div variants={item}>
-          <Card className="p-6 bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-red-500/10 border-yellow-500/20">
+          <Card className="p-6 rounded-full bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-red-500/10 border-yellow-500/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-full bg-yellow-500/20">
@@ -197,7 +197,7 @@ export default function Dashboard() {
         variants={container}
       >
         <motion.div variants={item}>
-          <Card className="p-6 card-hover-effect bg-gradient-to-br from-blue-500/5 to-blue-600/5 border-blue-500/20">
+          <Card className="p-6 card-hover-effect bg-gradient-to-br from-blue-500/5 to-blue-600/5 border-blue-500/20 rounded-3xl">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-full bg-blue-500/10">
                 <BarChart2 className="w-6 h-6 text-blue-500" />
@@ -215,7 +215,7 @@ export default function Dashboard() {
         </motion.div>
         
         <motion.div variants={item}>
-          <Card className="p-6 card-hover-effect bg-gradient-to-br from-green-500/5 to-green-600/5 border-green-500/20">
+          <Card className="p-6 card-hover-effect bg-gradient-to-br from-green-500/5 to-green-600/5 border-green-500/20 rounded-3xl">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-full bg-green-500/10">
                 <Award className="w-6 h-6 text-green-500" />
@@ -233,7 +233,7 @@ export default function Dashboard() {
         </motion.div>
         
         <motion.div variants={item}>
-          <Card className="p-6 card-hover-effect bg-gradient-to-br from-purple-500/5 to-purple-600/5 border-purple-500/20">
+          <Card className="p-6 card-hover-effect bg-gradient-to-br from-purple-500/5 to-purple-600/5 border-purple-500/20 rounded-3xl">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-full bg-purple-500/10">
                 <Target className="w-6 h-6 text-purple-500" />
@@ -251,7 +251,7 @@ export default function Dashboard() {
         </motion.div>
         
         <motion.div variants={item}>
-          <Card className="p-6 card-hover-effect bg-gradient-to-br from-orange-500/5 to-orange-600/5 border-orange-500/20">
+          <Card className="p-6 card-hover-effect bg-gradient-to-br from-orange-500/5 to-orange-600/5 border-orange-500/20 rounded-3xl">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-full bg-orange-500/10">
                 <Award className="w-6 h-6 text-orange-500" />
@@ -269,18 +269,18 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Search and Filter */}
-      <motion.div variants={item} className="flex flex-col gap-4 md:flex-row">
-        <div className="relative flex-1">
+      <motion.div variants={item} className="flex flex-col gap-4 md:flex-row ">
+        <div className="relative flex-1 ">
           <Search className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search interviews..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full py-3 pl-10 pr-4 transition-all border rounded-lg border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm"
+            className="w-full py-3 pl-10 pr-4 transition-all border rounded-3xl border-purple-400 dark:border-[#341350] bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm "
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2 backdrop-blur-sm">
+        <Button variant="outline" className="flex items-center gap-2 py-6 text-purple-600 rounded-3xl bg-purple-500/10 backdrop-blur-sm">
           <Filter size={16} />
           Filter
         </Button>
@@ -294,7 +294,7 @@ export default function Dashboard() {
         {/* Add New Interview Card */}
         <motion.div variants={item}>
           <Card 
-            className="group flex flex-col items-center justify-center min-h-[320px] p-8 cursor-pointer bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 hover:from-primary/10 hover:via-purple-500/10 hover:to-pink-500/10 border-dashed border-2 border-primary/20 hover:border-primary/40 transition-all duration-500 card-hover-effect"
+            className="group flex flex-col items-center justify-center min-h-[320px] p-8 cursor-pointer bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 hover:from-primary/10 hover:via-purple-500/10 hover:to-pink-500/10 border-dashed border-2 border-primary/20 hover:border-primary/40 transition-all duration-500 card-hover-effect rounded-3xl"
             onClick={() => setIsModalOpen(true)}
           >
             <div className="flex flex-col items-center justify-center gap-6 text-center">
@@ -324,7 +324,7 @@ export default function Dashboard() {
               whileHover="hover"
               whileTap="tap"
               onClick={() => handleInterviewClick(interview)}
-              className="p-6 space-y-4 transition-colors border rounded-lg shadow-lg cursor-pointer bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-border/50 hover:border-primary/20"
+              className="p-6 space-y-4 transition-colors border shadow-lg cursor-pointer rounded-3xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-border/50 hover:border-primary/20"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between">
@@ -359,7 +359,7 @@ export default function Dashboard() {
 
               <div className="pt-4">
                 <motion.button 
-                  className="flex items-center justify-center w-full gap-2 px-4 py-2 text-white rounded-lg bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 group"
+                  className="flex items-center justify-center w-full gap-2 px-4 py-2 text-white rounded-3xl bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 group"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >

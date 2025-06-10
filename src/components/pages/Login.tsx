@@ -81,7 +81,7 @@ export default function Login() {
                   id="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full py-3 pl-10 pr-4 transition-all duration-300 border rounded-lg border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full py-3 pl-10 pr-4 transition-all duration-300 border rounded-2xl border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Enter your email"
                   required
                 />
@@ -104,7 +104,7 @@ export default function Login() {
                   id="password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full py-3 pl-10 pr-12 transition-all duration-300 border rounded-lg border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full py-3 pl-10 pr-12 transition-all duration-300 border rounded-2xl border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Enter your password"
                   required
                 />
@@ -125,7 +125,7 @@ export default function Login() {
             >
               <Button
                 type="submit"
-                className="w-full py-3 transition-all duration-300 "
+                className="w-full py-3 transition-all duration-300 rounded-2xl "
                 disabled={isLoading}
               >
                 {isLoading ? (

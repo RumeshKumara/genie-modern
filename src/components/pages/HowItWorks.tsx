@@ -94,7 +94,7 @@ export default function HowItWorks() {
 
       {/* How It Works Steps */}
       <motion.div variants={item}>
-        <Card>
+        <Card className='rounded-3xl'>
           <CardHeader>
             <CardTitle className="text-2xl">The InterviewGenie Process</CardTitle>
             <CardDescription>Our AI-powered platform makes interview preparation simple and effective</CardDescription>
@@ -133,7 +133,7 @@ export default function HowItWorks() {
       >
         {features.map((feature, index) => (
           <motion.div key={index} variants={item}>
-            <Card className="h-full card-hover-effect">
+            <Card className="h-full card-hover-effect rounded-3xl">
               <CardHeader>
                 <div className="flex items-center gap-4">
                   <div className="p-3 rounded-full bg-background">
@@ -152,7 +152,7 @@ export default function HowItWorks() {
 
       {/* CTA Section */}
       <motion.div variants={item}>
-        <Card className="bg-gradient-to-br from-primary/5 to-purple-500/5">
+        <Card className="bg-gradient-to-br from-primary/5 to-purple-500/5 rounded-3xl">
           <CardContent className="p-8 space-y-4 text-center">
             <h2 className="text-2xl font-bold">Ready to Ace Your Next Interview?</h2>
             <p className="max-w-xl mx-auto text-muted-foreground">

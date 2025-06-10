@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Video, Mic, Settings, AlertCircle, ArrowLeft, MessageSquare, Clock, 
-  User, Briefcase, Award, Target, Crown, CheckCircle, XCircle, Info
+  Video, Mic, Settings, AlertCircle, ArrowLeft, Clock, 
+  User, Briefcase, Award, Target, Crown, CheckCircle, XCircle, Info, Play
 } from 'lucide-react';
 import Webcam from 'react-webcam';
 import { Card } from '../ui/Card';
@@ -148,7 +148,7 @@ export default function InterviewSetup() {
           {/* Left Column - Interview Details */}
           <div className="space-y-6 lg:col-span-1">
             {/* Interview Information */}
-            <Card className="p-6">
+            <Card className="p-6 rounded-3xl">
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-lg font-semibold">
                   <Info className="w-5 h-5 text-primary" />
@@ -198,7 +198,7 @@ export default function InterviewSetup() {
             </Card>
 
             {/* Question Count Selection */}
-            <Card className="p-6">
+            <Card className="p-6 rounded-3xl">
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-lg font-semibold">
                   <Target className="w-5 h-5 text-primary" />
@@ -235,7 +235,7 @@ export default function InterviewSetup() {
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="p-3 border rounded-lg bg-yellow-500/10 border-yellow-500/20"
+                      className="p-3 border rounded-2xl bg-yellow-500/10 border-yellow-500/20 "
                     >
                       <div className="flex items-start gap-2">
                         <Crown className="h-4 w-4 text-yellow-500 mt-0.5" />
@@ -263,7 +263,7 @@ export default function InterviewSetup() {
 
             {/* User Plan Info */}
             {user && (
-              <Card className="p-6">
+              <Card className="p-6 rounded-3xl">
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-lg font-semibold">
                     <Crown className="w-5 h-5 text-yellow-500" />
@@ -304,15 +304,15 @@ export default function InterviewSetup() {
           {/* Right Column - Camera and Controls */}
           <div className="space-y-6 lg:col-span-2">
             {/* Camera Preview */}
-            <Card className="p-6">
+            <Card className="p-6 rounded-3xl">
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">Camera Preview</h2>
-                <div className="relative overflow-hidden rounded-lg aspect-video bg-purple-500/10 max-w-xl mx-auto max-h-[300px]">
+                <div className="relative overflow-hidden rounded-3xl aspect-video bg-purple-500/10 max-w-xl mx-auto max-h-[300px]">
                   {hasWebcam && cameraEnabled ? (
                     <Webcam
                       ref={webcamRef}
                       audio={micEnabled}
-                      className="object-cover w-full h-full"
+                      className="object-cover w-full h-full "
                       mirrored
                     />
                   ) : (
@@ -344,7 +344,7 @@ export default function InterviewSetup() {
             </Card>
 
             {/* Device Check and Controls */}
-            <Card className="p-6">
+            <Card className="p-6 rounded-3xl">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-semibold">System Check</h2>
@@ -420,7 +420,14 @@ export default function InterviewSetup() {
                   </>
                 ) : (
                   <>
-                    <MessageSquare className="w-4 h-4 mr-2" />
+                    <motion.div
+                      initial={{ scale: 1 }}
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Play className="w-4 h-4 mr-2" />
+                    </motion.div>
                     Start Interview
                   </>
                 )}

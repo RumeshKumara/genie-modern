@@ -139,7 +139,7 @@ export default function Questions() {
             placeholder="Search questions..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full py-2 pl-10 pr-4 transition-all border rounded-lg border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full py-2 pl-10 pr-4 transition-all border rounded-3xl border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
         <Button variant="outline" className="flex items-center gap-2">
@@ -155,7 +155,7 @@ export default function Questions() {
       >
         {filteredQuestions.map((question) => (
           <motion.div key={question.id} variants={item}>
-            <Card className="card-hover-effect">
+            <Card className="card-hover-effect rounded-3xl">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
@@ -168,7 +168,7 @@ export default function Questions() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap items-center gap-6 text-sm">
+                <div className="flex flex-wrap items-center gap-6 text-sm ">
                   <div className="flex items-center gap-2">
                     <BookOpen size={16} className="text-muted-foreground" />
                     <span>Asked {question.timesAsked} times</span>

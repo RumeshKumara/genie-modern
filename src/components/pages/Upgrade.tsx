@@ -63,7 +63,7 @@ export default function Upgrade() {
         {plans.map((plan, index) => (
           <Card 
             key={index} 
-            className={`transition-all duration-300 ${
+            className={`transition-all duration-300 rounded-3xl ${
               plan.highlighted 
                 ? 'border-primary shadow-lg relative overflow-hidden' 
                 : ''
@@ -71,7 +71,7 @@ export default function Upgrade() {
           >
             {plan.highlighted && (
               <div className="absolute top-0 right-0">
-                <div className="px-3 py-1 text-xs font-bold bg-primary text-primary-foreground rounded-bl-md">
+                <div className="px-3 py-1 text-xs font-bold bg-primary text-primary-foreground rounded-bl-xl">
                   POPULAR
                 </div>
               </div>
