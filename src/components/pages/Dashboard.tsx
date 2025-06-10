@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Calendar, ArrowRight, Search, Filter, BarChart2, Award, Target, Crown, TrendingUp } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../ui/Card';
 import Button from '../ui/Button';
 import { useAuthStore } from '../../store/authStore';
@@ -27,6 +27,12 @@ const cardVariants = {
   initial: { scale: 1 },
   hover: { scale: 1.02 },
   tap: { scale: 0.98 },
+};
+
+const feedbackModalVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 30 } },
+  exit: { opacity: 0, y: 20 }
 };
 
 export default function Dashboard() {
@@ -114,6 +120,8 @@ export default function Dashboard() {
   ]);
   const [selectedInterview, setSelectedInterview] = useState<any>(null);
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState<any>(null);
 
   const handleCreateInterview = (interviewData: {
     title: string;
@@ -151,12 +159,12 @@ export default function Dashboard() {
     streak: 5
   };
 
-  // Add mock feedback data to completed interviews
+  // Modify the mock feedback data in interviewsWithFeedback
   const interviewsWithFeedback = interviews.map(interview => ({
     ...interview,
     feedback: {
       overallScore: interview.score || 0,
-      technicalScore: Math.round(Math.random() * 20 + 75), // Random score between 75-95
+      technicalScore: Math.round(Math.random() * 20 + 75),
       communicationScore: Math.round(Math.random() * 20 + 75),
       detailedFeedback: "You demonstrated strong technical knowledge and communication skills. Keep working on system design concepts.",
       strengths: [
@@ -172,15 +180,27 @@ export default function Dashboard() {
       questions: [
         {
           question: "Explain React's Virtual DOM and its benefits",
-          answer: "The Virtual DOM is a lightweight copy of the actual DOM...",
+          yourAnswer: "The Virtual DOM is a lightweight copy of the actual DOM that React uses to improve performance.",
+          correctAnswer: "The Virtual DOM is a lightweight JavaScript representation of the actual DOM. React uses it to perform a diffing process, comparing the Virtual DOM with the real DOM to determine minimal necessary updates. This process, called reconciliation, improves performance by reducing expensive DOM operations.",
           score: 85,
-          feedback: "Good explanation but could include more specific examples"
+          feedback: "Good basic understanding, but could have elaborated on reconciliation process",
+          keywords: ["lightweight", "performance", "diffing", "reconciliation"]
         },
         {
           question: "Describe the Redux data flow",
-          answer: "Redux follows a unidirectional data flow...",
+          yourAnswer: "Redux follows a unidirectional data flow where actions are dispatched to modify state.",
+          correctAnswer: "Redux follows a strict unidirectional data flow: 1) Actions are dispatched to describe state changes 2) Reducers process these actions and update the store 3) Components subscribe to store changes and re-render accordingly. This pattern ensures predictable state management.",
           score: 90,
-          feedback: "Excellent understanding of Redux principles"
+          feedback: "Excellent grasp of core concepts, could mention middleware",
+          keywords: ["unidirectional", "actions", "reducers", "store"]
+        },
+        {
+          question: "Explain CSS Box Model",
+          yourAnswer: "The box model consists of content, padding, border, and margin.",
+          correctAnswer: "The CSS Box Model is fundamental to layout and consists of: content (innermost), padding (space around content), border (boundary around padding), and margin (outer space). Each element can be modified using properties like padding, border-width, and margin.",
+          score: 88,
+          feedback: "Basic understanding shown, could have provided more details on usage",
+          keywords: ["content", "padding", "border", "margin"]
         }
       ]
     }
@@ -190,26 +210,166 @@ export default function Dashboard() {
     if (interview.status === 'completed') {
       const selectedWithFeedback = interviewsWithFeedback.find(i => i.id === interview.id);
       if (selectedWithFeedback) {
-        // Store feedback data in localStorage
-        localStorage.setItem('interviewAnswers', JSON.stringify({
-          0: { evaluation: { score: selectedWithFeedback.feedback.technicalScore, feedback: selectedWithFeedback.feedback.detailedFeedback, improvements: selectedWithFeedback.feedback.improvements } },
-          1: { evaluation: { score: selectedWithFeedback.feedback.communicationScore, feedback: "Communication skills assessment", improvements: ["Practice more concise responses"] } }
-        }));
-        localStorage.setItem('interviewQuestions', JSON.stringify(selectedWithFeedback.feedback.questions));
-        localStorage.setItem('selectedInterview', JSON.stringify({
-          ...selectedWithFeedback,
-          title: interview.title,
-          jobRole: interview.jobRole,
-          yearsOfExperience: interview.yearsOfExperience
-        }));
-        
-        // Navigate to results page
-        navigate('/interview-results');
+        setSelectedFeedback(selectedWithFeedback);
+        setShowFeedback(true);
       }
     } else {
       navigate(`/interview/${interview.id}`);
     }
   };
+
+  // Add this before the return statement
+  const FeedbackModal = () => (
+    <AnimatePresence>
+      {showFeedback && selectedFeedback && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowFeedback(false)}
+        >
+          <motion.div
+            className="w-full max-w-4xl p-6 m-4 space-y-6 bg-card rounded-3xl"
+            variants={feedbackModalVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between">
+              <h2 className="text-2xl font-bold">{selectedFeedback.title}</h2>
+              <button
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                onClick={() => setShowFeedback(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="p-4 rounded-2xl bg-blue-500/10">
+                <h3 className="font-semibold text-blue-500">Technical Score</h3>
+                <p className="text-2xl font-bold">{selectedFeedback.feedback.technicalScore}%</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-green-500/10">
+                <h3 className="font-semibold text-green-500">Communication Score</h3>
+                <p className="text-2xl font-bold">{selectedFeedback.feedback.communicationScore}%</p>
+              </div>
+            </div>
+
+            <div className="p-4 space-y-3 rounded-2xl bg-primary/5">
+              <h3 className="font-semibold">Detailed Feedback</h3>
+              <p className="text-muted-foreground">{selectedFeedback.feedback.detailedFeedback}</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <h3 className="font-semibold text-green-500">Strengths</h3>
+                <ul className="space-y-1">
+                  {selectedFeedback.feedback.strengths.map((strength: string, i: number) => (
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="flex items-center gap-2"
+                    >
+                      <span className="text-green-500">✓</span> {strength}
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold text-orange-500">Areas for Improvement</h3>
+                <ul className="space-y-1">
+                  {selectedFeedback.feedback.improvements.map((improvement: string, i: number) => (
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="flex items-center gap-2"
+                    >
+                      <span className="text-orange-500">➤</span> {improvement}
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Questions and Answers Section */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold">Questions and Answers</h3>
+              {selectedFeedback.feedback.questions.map((q, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="p-4 space-y-3 border rounded-2xl bg-background/50"
+                >
+                  <div className="flex items-start justify-between">
+                    <h4 className="font-medium">{q.question}</h4>
+                    <span className={`px-3 py-1 text-sm rounded-full ${
+                      q.score >= 90 ? 'bg-green-500/10 text-green-500' :
+                      q.score >= 80 ? 'bg-blue-500/10 text-blue-500' :
+                      'bg-orange-500/10 text-orange-500'
+                    }`}>
+                      Score: {q.score}%
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="p-3 rounded-xl bg-primary/5">
+                      <p className="text-sm font-medium text-primary">Your Answer:</p>
+                      <p className="text-sm text-muted-foreground">{q.yourAnswer}</p>
+                    </div>
+                    
+                    <div className="p-3 rounded-xl bg-green-500/5">
+                      <p className="text-sm font-medium text-green-500">Model Answer:</p>
+                      <p className="text-sm text-muted-foreground">{q.correctAnswer}</p>
+                    </div>
+                    
+                    <div className="p-3 rounded-xl bg-blue-500/5">
+                      <p className="text-sm font-medium text-blue-500">Feedback:</p>
+                      <p className="text-sm text-muted-foreground">{q.feedback}</p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {q.keywords.map((keyword, ki) => (
+                        <span key={ki} className="px-2 py-1 text-xs text-purple-500 rounded-full bg-purple-500/10">
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowFeedback(false)}
+              >
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  // Save to PDF or export functionality could be added here
+                  console.log('Export feedback');
+                }}
+              >
+                Export Feedback
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 
   return (
     <motion.div 
@@ -481,6 +641,7 @@ export default function Dashboard() {
         onClose={() => setIsResultModalOpen(false)}
         interview={selectedInterview}
       />
+      <FeedbackModal />
     </motion.div>
   );
 }
