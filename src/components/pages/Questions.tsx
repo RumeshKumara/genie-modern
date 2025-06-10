@@ -1,8 +1,15 @@
 import { useState } from 'react';
-import { Search, Filter, BookOpen, Code, Users, Brain, Target } from 'lucide-react';
+import { Search, Filter, BookOpen, Code, Users, Brain, Target, Timer, MessageCircle, ThumbsUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/Dialog";
 
 const container = {
   hidden: { opacity: 0 },
@@ -17,6 +24,37 @@ const container = {
 const item = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0 }
+};
+
+const dialogAnimation = {
+  hidden: {
+    opacity: 0,
+    scale: 0.95,
+    y: -20
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      duration: 0.3
+    }
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    y: 20,
+    transition: {
+      duration: 0.2
+    }
+  }
+};
+
+const overlayAnimation = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+  exit: { opacity: 0 }
 };
 
 type QuestionCategory = 'all' | 'technical' | 'behavioral' | 'system-design';
@@ -34,6 +72,8 @@ interface Question {
 export default function Questions() {
   const [selectedCategory, setSelectedCategory] = useState<QuestionCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const questions: Question[] = [
     {
@@ -168,7 +208,7 @@ export default function Questions() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap items-center gap-6 text-sm ">
+                <div className="flex flex-wrap items-center gap-6 text-sm">
                   <div className="flex items-center gap-2">
                     <BookOpen size={16} className="text-muted-foreground" />
                     <span>Asked {question.timesAsked} times</span>
@@ -177,13 +217,55 @@ export default function Questions() {
                     <Target size={16} className="text-muted-foreground" />
                     <span>{question.successRate}% success rate</span>
                   </div>
-                  <Button className="ml-auto">Practice Now</Button>
+                  <Button 
+                    className="ml-auto"
+                    onClick={() => {
+                      setSelectedQuestion(question);
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    Practice Now
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
         ))}
       </motion.div>
+
+      {/* Practice Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>{selectedQuestion?.question}</DialogTitle>
+            <DialogDescription>{selectedQuestion?.description}</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Button className="flex items-center gap-2">
+                <Timer size={16} />
+                Start Timer
+              </Button>
+              <Button variant="outline" className="flex items-center gap-2">
+                <MessageCircle size={16} />
+                Hints
+              </Button>
+            </div>
+
+            <textarea
+              className="w-full h-32 p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Write your answer here..."
+            />
+            <div className="flex justify-between">
+              <Button variant="outline" className="flex items-center gap-2">
+                <ThumbsUp size={16} />
+                View Solution
+              </Button>
+              <Button>Submit Answer</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
