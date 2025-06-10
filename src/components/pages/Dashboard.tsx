@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Plus, Calendar, Clock, ArrowRight, Search, Filter, BarChart2, Award, Target, Crown, TrendingUp } from 'lucide-react';
+import { Plus, Calendar, ArrowRight, Search, Filter, BarChart2, Award, Target, Crown, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from '../ui/Card';
 import Button from '../ui/Button';
 import { useAuthStore } from '../../store/authStore';
 import NewInterviewModal from '../features/NewInterviewModal';
 import InterviewResultModal from '../features/InterviewResultModal';
+import { useNavigate } from 'react-router-dom';
 
 const container = {
   hidden: { opacity: 0 },
@@ -29,6 +30,7 @@ const cardVariants = {
 };
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,7 +41,9 @@ export default function Dashboard() {
     createdAt: Date;
     lastUpdated: Date | null;
     score?: number;
-    status: 'completed' | 'scheduled' | 'in-progress';
+    status: 'completed';
+    yearsOfExperience?: string;
+    reasonForInterview?: string;
   }>>([
     {
       id: '1',
@@ -48,15 +52,20 @@ export default function Dashboard() {
       createdAt: new Date('2024-03-10'),
       lastUpdated: new Date('2024-03-15'),
       score: 85,
-      status: 'completed'
+      status: 'completed',
+      yearsOfExperience: '5+ years',
+      reasonForInterview: 'Career Switch'
     },
     {
       id: '2',
-      title: 'System Design Interview',
+      title: 'System Design Discussion',
       jobRole: 'Software Architect',
       createdAt: new Date('2024-03-12'),
-      lastUpdated: null,
-      status: 'scheduled'
+      lastUpdated: new Date('2024-03-12'),
+      score: 78,
+      status: 'completed',
+      yearsOfExperience: '3-5 years',
+      reasonForInterview: 'Skill Enhancement'
     },
     {
       id: '3',
@@ -65,7 +74,42 @@ export default function Dashboard() {
       createdAt: new Date('2024-03-14'),
       lastUpdated: new Date('2024-03-14'),
       score: 92,
-      status: 'completed'
+      status: 'completed',
+      yearsOfExperience: '5+ years',
+      reasonForInterview: 'Career Growth'
+    },
+    {
+      id: '4',
+      title: 'Backend Development',
+      jobRole: 'Node.js Developer',
+      createdAt: new Date('2024-03-15'),
+      lastUpdated: new Date('2024-03-15'),
+      score: 88,
+      status: 'completed',
+      yearsOfExperience: '2-4 years',
+      reasonForInterview: 'Job Opportunity'
+    },
+    {
+      id: '5',
+      title: 'Data Structures & Algorithms',
+      jobRole: 'Software Engineer',
+      createdAt: new Date('2024-03-16'),
+      lastUpdated: new Date('2024-03-16'),
+      score: 95,
+      status: 'completed',
+      yearsOfExperience: '1-3 years',
+      reasonForInterview: 'Practice'
+    },
+    {
+      id: '6',
+      title: 'Full Stack Discussion',
+      jobRole: 'Full Stack Engineer',
+      createdAt: new Date('2024-03-17'),
+      lastUpdated: new Date('2024-03-17'),
+      score: 89,
+      status: 'completed',
+      yearsOfExperience: '4-6 years',
+      reasonForInterview: 'Skill Enhancement'
     }
   ]);
   const [selectedInterview, setSelectedInterview] = useState<any>(null);
@@ -82,7 +126,8 @@ export default function Dashboard() {
       jobRole: interviewData.jobRole,
       createdAt: new Date(),
       lastUpdated: null,
-      status: 'scheduled' as const
+      status: 'completed' as const,
+      score: 0
     };
     
     setInterviews([newInterview, ...interviews]);
@@ -107,33 +152,62 @@ export default function Dashboard() {
   };
 
   // Add mock feedback data to completed interviews
-  const interviewsWithFeedback = interviews.map(interview => {
-    if (interview.status === 'completed') {
-      return {
-        ...interview,
-        feedback: "You demonstrated strong technical knowledge and communication skills. Keep working on system design concepts.",
-        strengths: [
-          "Clear communication",
-          "Strong problem-solving approach",
-          "Good technical fundamentals"
-        ],
-        improvements: [
-          "Deepen system design knowledge",
-          "Practice time management",
-          "Elaborate more on past experiences"
-        ]
-      };
+  const interviewsWithFeedback = interviews.map(interview => ({
+    ...interview,
+    feedback: {
+      overallScore: interview.score || 0,
+      technicalScore: Math.round(Math.random() * 20 + 75), // Random score between 75-95
+      communicationScore: Math.round(Math.random() * 20 + 75),
+      detailedFeedback: "You demonstrated strong technical knowledge and communication skills. Keep working on system design concepts.",
+      strengths: [
+        "Clear communication",
+        "Strong problem-solving approach",
+        "Good technical fundamentals"
+      ],
+      improvements: [
+        "Deepen system design knowledge",
+        "Practice time management",
+        "Elaborate more on past experiences"
+      ],
+      questions: [
+        {
+          question: "Explain React's Virtual DOM and its benefits",
+          answer: "The Virtual DOM is a lightweight copy of the actual DOM...",
+          score: 85,
+          feedback: "Good explanation but could include more specific examples"
+        },
+        {
+          question: "Describe the Redux data flow",
+          answer: "Redux follows a unidirectional data flow...",
+          score: 90,
+          feedback: "Excellent understanding of Redux principles"
+        }
+      ]
     }
-    return interview;
-  });
+  }));
 
   const handleInterviewClick = (interview: any) => {
     if (interview.status === 'completed') {
       const selectedWithFeedback = interviewsWithFeedback.find(i => i.id === interview.id);
-      setSelectedInterview(selectedWithFeedback);
-      setIsResultModalOpen(true);
+      if (selectedWithFeedback) {
+        // Store feedback data in localStorage
+        localStorage.setItem('interviewAnswers', JSON.stringify({
+          0: { evaluation: { score: selectedWithFeedback.feedback.technicalScore, feedback: selectedWithFeedback.feedback.detailedFeedback, improvements: selectedWithFeedback.feedback.improvements } },
+          1: { evaluation: { score: selectedWithFeedback.feedback.communicationScore, feedback: "Communication skills assessment", improvements: ["Practice more concise responses"] } }
+        }));
+        localStorage.setItem('interviewQuestions', JSON.stringify(selectedWithFeedback.feedback.questions));
+        localStorage.setItem('selectedInterview', JSON.stringify({
+          ...selectedWithFeedback,
+          title: interview.title,
+          jobRole: interview.jobRole,
+          yearsOfExperience: interview.yearsOfExperience
+        }));
+        
+        // Navigate to results page
+        navigate('/interview-results');
+      }
     } else {
-      window.location.href = `/interview/${interview.id}`;
+      navigate(`/interview/${interview.id}`);
     }
   };
 
@@ -331,7 +405,6 @@ export default function Dashboard() {
                   <h3 className="text-xl font-semibold line-clamp-2">{interview.title}</h3>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                     interview.status === 'completed' ? 'bg-green-500/10 text-green-500' :
-                    interview.status === 'scheduled' ? 'bg-blue-500/10 text-blue-500' :
                     'bg-orange-500/10 text-orange-500'
                   }`}>
                     {interview.status.charAt(0).toUpperCase() + interview.status.slice(1)}
@@ -346,26 +419,50 @@ export default function Dashboard() {
                   <span>Created: {interview.createdAt.toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock size={16} />
-                  <span>Duration: ~45 mins</span>
+                  <Target size={16} />
+                  <span>Experience: {interview.yearsOfExperience || 'Not specified'}</span>
                 </div>
-                {interview.score && (
-                  <div className="flex items-center gap-2">
-                    <Target size={16} />
-                    <span className="font-medium">Score: {interview.score}%</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <ArrowRight size={16} />
+                  <span>Purpose: {interview.reasonForInterview || 'Practice'}</span>
+                </div>
               </div>
 
               <div className="pt-4">
-                <motion.button 
-                  className="flex items-center justify-center w-full gap-2 px-4 py-2 text-white rounded-3xl bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 group"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {interview.status === 'completed' ? 'View Results' : 'Start Interview'}
-                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-                </motion.button>
+                <div className="flex gap-2">
+                  <motion.button 
+                    className="flex items-center justify-center flex-1 gap-2 px-4 py-2 text-green-500 rounded-3xl group bg-green-500/10 hover:bg-green-500/20"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleInterviewClick(interview);
+                    }}
+                  >
+                    View Feedback
+                  </motion.button>
+
+                  <motion.button 
+                    className="flex items-center justify-center flex-1 gap-2 px-4 py-2 text-white rounded-3xl group bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const interviewData = {
+                        id: interview.id,
+                        title: interview.title,
+                        jobRole: interview.jobRole,
+                        yearsOfExperience: interview.yearsOfExperience || '3-5 years',
+                        reasonForInterview: interview.reasonForInterview || 'Practice'
+                      };
+                      localStorage.setItem('interviewData', JSON.stringify(interviewData));
+                      navigate('/interview-setup');
+                    }}
+                  >
+                    Start Again
+                    <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                  </motion.button>
+                </div>
               </div>
             </motion.div>
           </motion.div>

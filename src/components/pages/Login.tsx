@@ -46,7 +46,7 @@ export default function Login() {
           Back to Home
         </motion.button>
 
-        <Card className="p-8 shadow-2xl backdrop-blur-sm bg-card/80 border-border/50">
+        <Card className="p-8 shadow-2xl backdrop-blur-sm bg-card/80 border-border/50 rounded-3xl">
           {/* Header */}
           <div className="mb-8 text-center">
             <motion.div
@@ -160,17 +160,7 @@ export default function Login() {
           </motion.div>
         </Card>
 
-        {/* Demo Credentials */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="p-4 mt-6 border rounded-lg bg-card/50 border-border/50 backdrop-blur-sm"
-        >
-          <p className="text-sm text-center text-muted-foreground">
-            <strong>Demo:</strong> Use any email and password to sign in
-          </p>
-        </motion.div>
+       
       </motion.div>
     </div>
   );
