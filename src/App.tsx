@@ -12,6 +12,7 @@ import Login from './components/pages/Login';
 import InterviewSetup from './components/pages/InterviewSetup';
 import InterviewSession from './components/pages/InterviewSession';
 import InterviewResults from './components/pages/InterviewResults';
+import { RedirectToSignIn, SignedIn, SignedOut, SignIn } from '@clerk/clerk-react';
 
 function App() {
   const location = useLocation();
@@ -20,7 +21,22 @@ function App() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
+
+        {/* Public routes */}
         <Route path="/login" element={<Login />} />
+        <Route path="/sign-in/*" element={<SignIn routing="path" path="/sign-in" />} />
+
+        {/* Protected routes */}
+        <Route element={
+          <>
+            <SignedIn>
+              <RootLayout />
+            </SignedIn>
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </>
+        }></Route>
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="questions" element={<Questions />} />
