@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Menu, X, Sparkles, Moon, Sun, LogIn, LogOut, User, Settings, Crown } from 'lucide-react';
+import { Menu, X, Sparkles, Moon, Sun, LogIn, Crown } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
-import { useAuthStore } from '../../store/authStore';
+import { useAuth } from '@clerk/clerk-react';
 import { cn } from '../../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserButton, SignInButton } from '@clerk/clerk-react';
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
-  const { user, isAuthenticated, logout, isSignedIn } = useAuthStore();
+  const { isSignedIn } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -25,16 +25,6 @@ export default function Navbar() {
   }, []);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-  const handleLogin = () => {
-    navigate('/login');
-  };
-
-  const handleLogout = () => {
-    logout();
-    setIsUserMenuOpen(false);
-    navigate('/');
-  };
 
   return (
     <header className={cn(
@@ -180,7 +170,18 @@ export default function Navbar() {
             </motion.button>
             
             {/* Authentication */}
-            {isSignedIn ? (
+            {!isSignedIn ? (
+              <SignInButton mode="modal">
+                <motion.button
+                  className="flex items-center gap-2 px-4 py-2 transition-all duration-300 rounded-3xl bg-primary text-primary-foreground hover:bg-primary/90"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <LogIn size={16} />
+                  <span className="hidden sm:inline">Sign In</span>
+                </motion.button>
+              </SignInButton>
+            ) : (
               <div className="relative">
                 <UserButton 
                   afterSignOutUrl="/sign-in"
@@ -194,17 +195,6 @@ export default function Navbar() {
                   }}
                 />
               </div>
-            ) : (
-              <SignInButton mode="redirect">
-                <motion.button
-                  className="flex items-center gap-2 px-4 py-2 transition-all duration-300 rounded-3xl bg-primary text-primary-foreground hover:bg-primary/90"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <LogIn size={16} />
-                  <span className="hidden sm:inline">Sign In</span>
-                </motion.button>
-              </SignInButton>
             )}
 
             {/* Mobile Menu Button */}
@@ -287,17 +277,15 @@ export default function Navbar() {
                   How it Works
                 </NavLink>
                 
-                {!isAuthenticated && (
-                  <button
-                    onClick={() => {
-                      handleLogin();
-                      setIsMenuOpen(false);
-                    }}
-                    className="flex items-center justify-center gap-2 px-4 py-3 mx-4 mt-4 transition-all duration-300 rounded-3xl bg-primary text-primary-foreground hover:bg-primary/90"
-                  >
-                    <LogIn size={16} />
-                    Sign In
-                  </button>
+                {!isSignedIn && (
+                  <SignInButton mode="redirect">
+                    <button
+                      className="flex items-center justify-center gap-2 px-4 py-3 mx-4 mt-4 transition-all duration-300 rounded-3xl bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
+                      <LogIn size={16} />
+                      Sign In
+                    </button>
+                  </SignInButton>
                 )}
               </div>
             </motion.div>
