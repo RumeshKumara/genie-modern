@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "types": ["styled-components"]
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

@@ -13,6 +13,7 @@ import InterviewSetup from './components/pages/InterviewSetup';
 import InterviewSession from './components/pages/InterviewSession';
 import InterviewResults from './components/pages/InterviewResults';
 import { RedirectToSignIn, SignedIn, SignedOut, SignIn } from '@clerk/clerk-react';
+import { SignInWrapper } from './components/styles/SignInStyles';
 
 function App() {
   const location = useLocation();
@@ -24,7 +25,29 @@ function App() {
 
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/sign-in/*" element={<SignIn routing="path" path="/sign-in" />} />
+        <Route 
+          path="/sign-in/*" 
+          element={
+            <SignInWrapper>
+              <SignIn 
+                routing="path" 
+                path="/sign-in"
+                appearance={{
+                  variables: {
+                    colorPrimary: '#4f46e5',
+                    borderRadius: '8px',
+                  },
+                  elements: {
+                    card: {
+                      maxWidth: '400px',
+                      width: '90%',
+                    },
+                  },
+                }}
+              />
+            </SignInWrapper>
+          } 
+        />
 
         {/* Protected routes */}
         <Route element={

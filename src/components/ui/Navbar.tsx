@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Menu, X, Sparkles, Moon, Sun, LogIn, Crown } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth, useClerk } from '@clerk/clerk-react';  // Add useClerk import
 import { cn } from '../../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserButton, SignInButton } from '@clerk/clerk-react';
@@ -10,6 +10,7 @@ import { UserButton, SignInButton } from '@clerk/clerk-react';
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { isSignedIn } = useAuth();
+  const { signOut } = useClerk();  // Add this hook
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -25,6 +26,11 @@ export default function Navbar() {
   }, []);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <header className={cn(
@@ -184,7 +190,8 @@ export default function Navbar() {
             ) : (
               <div className="relative">
                 <UserButton 
-                  afterSignOutUrl="/sign-in"
+                  afterSignOutUrl="/"
+                  signOut={handleSignOut}
                   appearance={{
                     elements: {
                       userButtonAvatarBox: "w-8 h-8",
