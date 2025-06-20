@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Clock, MessageSquare, Mic, Video, AlertCircle, ChevronRight, ChevronLeft,
   CheckCircle, XCircle, Award, ThumbsUp, ThumbsDown, BookOpen, Target,
-  VideoOff, MicOff, Play, Pause, RotateCcw, Settings, Eye, EyeOff
+  VideoOff, MicOff, Play, Pause, RotateCcw, Settings, Eye, EyeOff, Volume2
 } from 'lucide-react';
 import Webcam from 'react-webcam';
 import { Card } from '../ui/Card';
@@ -226,6 +226,14 @@ export default function InterviewSession() {
     }
   };
 
+  const speakText = (text: string) => {
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.rate = 0.9; // Slightly slower for better clarity
+    speech.pitch = 1;
+    window.speechSynthesis.cancel(); // Cancel any ongoing speech
+    window.speechSynthesis.speak(speech);
+  };
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -335,9 +343,25 @@ export default function InterviewSession() {
                       className="space-y-6"
                     >
                       <div className="p-6 border bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 rounded-xl border-primary/10">
-                        <p className="text-xl font-medium leading-relaxed">
-                          {dummyQuestions[currentQuestionIndex].question}
-                        </p>
+                        <div className="flex items-start gap-3">
+                          <motion.button
+                            whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}
+                            whileTap={{ scale: 0.95, rotate: 0 }}
+                            onClick={() => speakText(dummyQuestions[currentQuestionIndex].question)}
+                            className="flex-shrink-0 p-2 rounded-full hover:bg-primary/10"
+                            aria-label="Speak question"
+                          >
+                            <Volume2 className="w-5 h-5 text-primary" />
+                          </motion.button>
+                          <motion.p
+                            className="text-xl font-medium leading-relaxed"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.4 }}
+                          >
+                            {dummyQuestions[currentQuestionIndex].question}
+                          </motion.p>
+                        </div>
                       </div>
                       
                       <div className="space-y-3">
@@ -819,7 +843,17 @@ export default function InterviewSession() {
                           {index + 1}
                         </motion.div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{question.question}</p>
+                          <div className="flex items-start gap-2">
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => speakText(question.question)}
+                              className="p-1 mt-0.5 rounded-full hover:bg-primary/10"
+                            >
+                              <Volume2 className="w-4 h-4 text-primary" />
+                            </motion.button>
+                            <p className="text-sm font-medium truncate">{question.question}</p>
+                          </div>
                           <div className="flex items-center gap-2 mt-2">
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                               difficultyColors[question.difficulty]
