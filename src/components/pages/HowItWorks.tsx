@@ -69,7 +69,20 @@ export default function HowItWorks() {
   ];
 
   const handleStartPracticing = () => {
-    navigate('/dashboard');
+    // Create default interview data for quick practice
+    const defaultInterviewData = {
+      title: 'Quick Practice Session',
+      jobRole: 'Software Developer',
+      yearsOfExperience: '2-4 years',
+      reasonForInterview: 'practice',
+      timestamp: new Date().toISOString()
+    };
+    
+    // Store interview data in localStorage
+    localStorage.setItem('interviewData', JSON.stringify(defaultInterviewData));
+    
+    // Navigate to interview setup
+    navigate('/interview/setup');
   };
 
   return (

@@ -621,7 +621,7 @@ export default function Dashboard() {
                         reasonForInterview: interview.reasonForInterview || 'Practice'
                       };
                       localStorage.setItem('interviewData', JSON.stringify(interviewData));
-                      navigate('/interview-setup');
+                      navigate('/interview/setup');
                     }}
                   >
                     Start Again
