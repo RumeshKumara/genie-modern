@@ -3,7 +3,7 @@ import { Plus, Calendar, ArrowRight, Search, Filter, BarChart2, Award, Target, C
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../ui/Card';
 import Button from '../ui/Button';
-import { useAuthStore } from '../../store/authStore';
+import { useUser } from '@clerk/clerk-react';
 import NewInterviewModal from '../features/NewInterviewModal';
 import InterviewResultModal from '../features/InterviewResultModal';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +37,7 @@ const feedbackModalVariants = {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuthStore();
+  const { user: clerkUser, isSignedIn } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [interviews, setInterviews] = useState<Array<{
@@ -382,10 +382,10 @@ export default function Dashboard() {
       <motion.div variants={item} className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-4xl font-bold text-transparent bg-gradient-to-r from-primary via-purple-700 to-purple-500 bg-clip-text">
-            {isAuthenticated && user ? `Welcome back, ${user.name.split(' ')[0]}!` : 'Dashboard'}
+            {isSignedIn && clerkUser ? `Welcome back, ${clerkUser.firstName || 'User'}!` : 'Dashboard'}
           </h1>
           <p className="mt-2 text-lg text-muted-foreground">
-            {isAuthenticated ? 'Ready to ace your next interview?' : 'Create and practice AI-powered mock interviews'}
+            {isSignedIn ? 'Ready to ace your next interview?' : 'Create and practice AI-powered mock interviews'}
           </p>
         </div>
         <Button 
@@ -399,31 +399,36 @@ export default function Dashboard() {
       </motion.div>
 
       {/* User Plan Banner */}
-      {isAuthenticated && user && user.plan === 'free' && (
-        <motion.div variants={item}>
-          <Card className="p-6 rounded-full bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-red-500/10 border-yellow-500/20">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-full bg-yellow-500/20">
-                  <Crown className="w-6 h-6 text-yellow-500" />
+      <AnimatePresence>
+        {isSignedIn && clerkUser && (
+          <motion.div 
+            variants={item}
+            exit={{ opacity: 0, y: -20, transition: { duration: 0.3 } }}
+          >
+            <Card className="p-6 rounded-full bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-red-500/10 border-yellow-500/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-full bg-yellow-500/20">
+                    <Crown className="w-6 h-6 text-yellow-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Upgrade to Pro</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Unlock unlimited interviews, advanced feedback, and more features
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold">Upgrade to Pro</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Unlock unlimited interviews, advanced feedback, and more features
-                  </p>
-                </div>
+                <Button 
+                  onClick={() => window.location.href = '/upgrade'}
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                >
+                  Upgrade Now
+                </Button>
               </div>
-              <Button 
-                onClick={() => window.location.href = '/upgrade'}
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
-              >
-                Upgrade Now
-              </Button>
-            </div>
-          </Card>
-        </motion.div>
-      )}
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Quick Stats */}
       <motion.div 
