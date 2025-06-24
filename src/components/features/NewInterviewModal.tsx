@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Briefcase, FileText, Clock, Award, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuthStore } from '../../store/authStore';
+import { useAuth, useSignIn } from '@clerk/clerk-react';
 import Button from '../ui/Button';
 
 interface NewInterviewModalProps {
@@ -64,7 +64,8 @@ const reasonOptions = [
 
 export default function NewInterviewModal({ isOpen, onClose, onSubmit }: NewInterviewModalProps) {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuthStore();
+  const { isSignedIn, userId } = useAuth();
+  const { signIn } = useSignIn();
   const [formData, setFormData] = useState({
     title: '',
     jobRole: '',
@@ -80,15 +81,21 @@ export default function NewInterviewModal({ isOpen, onClose, onSubmit }: NewInte
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isAuthenticated) {
-      navigate('/login');
+    if (!isSignedIn) {
+      // Redirect to Clerk sign-in
+      await signIn?.authenticateWithRedirect({
+        strategy: 'oauth_google', // or your preferred strategy
+        redirectUrl: window.location.href,
+        redirectUrlComplete: '/interview/setup'
+      });
       return;
     }
 
     // Store interview data in localStorage
     localStorage.setItem('interviewData', JSON.stringify({
       ...formData,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      userId: userId
     }));
 
     // Navigate to interview setup
@@ -265,7 +272,7 @@ export default function NewInterviewModal({ isOpen, onClose, onSubmit }: NewInte
                   disabled={!formData.title || !formData.jobRole || !formData.yearsOfExperience || !formData.reasonForInterview}
                   className="button-hover-effect"
                 >
-                  {isAuthenticated ? 'Start Interview' : 'Sign In to Continue'}
+                  {isSignedIn ? 'Start Interview' : 'Sign In to Continue'}
                 </Button>
               </motion.div>
             </form>
