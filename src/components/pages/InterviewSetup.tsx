@@ -371,34 +371,114 @@ export default function InterviewSetup() {
                       <Mic size={12} />
                       {micEnabled ? (hasMic ? 'ON' : 'Error') : 'OFF'}
                     </button>
-                    <Button
-                  onClick={handleDeviceCheck}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center justify-center gap-2"
-                >
-                  <Settings className="w-4 h-4" />
-                  Check Devices
-                </Button>
                   </div>
+                </div>
+
+                {/* Focused Device Check Button */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">
+                        Test your camera and microphone before starting
+                      </p>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          {hasWebcam ? (
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-red-500" />
+                          )}
+                          <span className="text-sm">Camera</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {hasMic ? (
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-red-500" />
+                          )}
+                          <span className="text-sm">Microphone</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        onClick={handleDeviceCheck}
+                        variant={isReady ? "outline" : "default"}
+                        size="lg"
+                        className={`flex items-center gap-2 min-w-[140px] ${
+                          isReady 
+                            ? 'border-green-500/20 bg-green-500/5 text-green-600 hover:bg-green-500/10' 
+                            : 'bg-primary hover:bg-primary/90'
+                        }`}
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <>
+                            <motion.div
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              className="w-4 h-4 border-2 border-current rounded-full border-t-transparent"
+                            />
+                            Checking...
+                          </>
+                        ) : (
+                          <>
+                            <Settings className="w-4 h-4" />
+                            {isReady ? 'Re-test Devices' : 'Test Devices'}
+                          </>
+                        )}
+                      </Button>
+                    </motion.div>
+                  </div>
+
+                  {/* System Status */}
+                  {isReady && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-3 border bg-green-500/10 border-green-500/20 rounded-xl"
+                    >
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                          System Ready - You can start your interview
+                        </span>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
                 
                 {permissionError && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-3 text-sm border border-red-200 rounded-md bg-red-50 dark:bg-red-950/20 dark:border-red-800"
+                    className="p-3 text-sm border border-red-200 rounded-xl bg-red-50 dark:bg-red-950/20 dark:border-red-800"
                   >
                     <div className="flex items-start gap-2">
                       <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
-                      <div className="text-red-700 dark:text-red-400">
-                        {permissionError}
+                      <div className="space-y-2">
+                        <div className="font-medium text-red-700 dark:text-red-400">
+                          Device Check Failed
+                        </div>
+                        <div className="text-red-600 dark:text-red-500">
+                          {permissionError}
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleDeviceCheck}
+                          className="border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
+                        >
+                          Try Again
+                        </Button>
                       </div>
                     </div>
                   </motion.div>
                 )}
-
-                
               </div>
             </Card>
 
