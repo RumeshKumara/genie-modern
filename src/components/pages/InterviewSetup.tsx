@@ -89,8 +89,29 @@ export default function InterviewSetup() {
       );
       
       setQuestions(generatedQuestions);
+      
+      // Store comprehensive interview session data
+      const sessionData = {
+        questions: generatedQuestions,
+        jobRole: interviewData.jobRole,
+        title: interviewData.title,
+        yearsOfExperience: interviewData.yearsOfExperience,
+        reasonForInterview: interviewData.reasonForInterview,
+        questionCount: questionCount,
+        startTime: new Date().toISOString(),
+        userId: user.id
+      };
+      
       localStorage.setItem('interviewQuestions', JSON.stringify(generatedQuestions));
-      navigate('/interview/session');
+      localStorage.setItem('currentInterviewSession', JSON.stringify(sessionData));
+      
+      // Navigate to session with job role context
+      const jobRoleSlug = interviewData.jobRole.toLowerCase().replace(/\s+/g, '-');
+      navigate(`/interview/session/${jobRoleSlug}`, { 
+        state: { 
+          interviewData: sessionData 
+        }
+      });
     } catch (error) {
       console.error('Failed to start interview:', error);
       setPermissionError('Failed to generate interview questions. Please try again.');
